@@ -2,69 +2,63 @@
 
 A Learning Management System (LMS) backend built with Java and Spring Boot.
 
-## 🚀 Tech Stack
+## Tech Stack
 
 - Java 17
 - Spring Boot
-- Spring Data JPA
-- MySQL
+- Spring Data JPA / Hibernate
+- PostgreSQL
+- Spring Security Crypto (BCrypt)
 - Maven
 - Lombok
-- Validation
+- Jakarta Validation
 
-## 📂 Project Status
+## Current Progress
 
-Current Progress:
-
-- [x] Setup Spring Boot Project
-- [x] Connect MySQL Database
-- [x] Configure application.properties
-- [x] Create First REST API
-- [ ] User Entity
-- [ ] Repository Layer
-- [ ] Service Layer
-- [ ] Authentication
-- [ ] JWT
-- [ ] Course Management
-- [ ] Lesson Management
+- [x] Spring Boot project setup
+- [x] PostgreSQL database configuration
+- [x] User entity and repository
+- [x] User registration API
+- [x] Password hashing with BCrypt
+- [ ] Global exception handling
+- [ ] Authentication with JWT
+- [ ] Course management
+- [ ] Lesson management
 - [ ] Quiz
-- [ ] Payment
+- [ ] Payment integration
 
-## 📁 Project Structure
+## API
 
-```text
-src
-├── main
-│   ├── java
-│   └── resources
-└── test
+### Register
+
+`POST /api/auth/register`
+
+Request body:
+
+```json
+{
+  "username": "linh",
+  "email": "linh@example.com",
+  "password": "123456",
+  "confirmPassword": "123456"
+}
 ```
 
-## 📌 API
+## Run Locally
 
-### Hello API
+1. Install Java 17 and PostgreSQL.
+2. Create a PostgreSQL database named `lms_db`.
+3. Configure the environment variables `DB_USERNAME` and `DB_PASSWORD`.
+4. Run the application:
 
-```
-GET /api/hello
-```
-
-Response
-
-```text
-Hello LMS!
+```bash
+./mvnw spring-boot:run
 ```
 
-## 📅 Learning Log
+On Windows:
 
-### Day 1
+```powershell
+.\mvnw.cmd spring-boot:run
+```
 
-- Setup IntelliJ IDEA
-- Create Spring Boot Project
-- Learn project structure
-- Configure MySQL
-- Understand application.properties
-- Create first REST API
-
----
-
-This project is built for learning Spring Boot and Java Backend Development.
+This project is built for learning Java backend development with Spring Boot.
