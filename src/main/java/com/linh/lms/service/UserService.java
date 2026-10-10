@@ -3,6 +3,8 @@ package com.linh.lms.service;
 import com.linh.lms.dto.RegisterRequest;
 import com.linh.lms.dto.RegisterResponse;
 import com.linh.lms.entity.User;
+import com.linh.lms.exception.EmailAlreadyExistsException;
+import com.linh.lms.exception.UsernameAlreadyExistsException;
 import com.linh.lms.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,10 @@ public class UserService {
 
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new EmailAlreadyExistsException("Email already exists");
         }
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new UsernameAlreadyExistsException("Username already exists");
         }
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new RuntimeException("Passwords do not match");
