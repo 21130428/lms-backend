@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,12 +27,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<String>> validException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<Map<String, List<String>>> validException(MethodArgumentNotValidException exception) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        List<String> errors = new ArrayList<>();
+        Map<String, List<String>> errors = new HashMap<>();
         for (FieldError error : exception.getBindingResult().getFieldErrors()) {
-            errors.add(error.getDefaultMessage());
+            if (errors.containsKey(error.getField())) {
+                errors.get(error.getField()).add(error.getDefaultMessage());
+            } else {
+                List<String> messages = new ArrayList<>();
+                messages.add(error.getDefaultMessage());
+                errors.put(error.getField(), messages);
+            }
         }
-        return new ResponseEntity<>(errors, httpStatus);
+        return new ResponseEntity<Map<String, List<String>>>(errors, httpStatus);
     }
 }
