@@ -1,5 +1,7 @@
 package com.linh.lms.controller;
 
+import com.linh.lms.dto.LoginRequest;
+import com.linh.lms.dto.LoginResponse;
 import com.linh.lms.dto.RegisterRequest;
 import com.linh.lms.dto.RegisterResponse;
 import com.linh.lms.service.UserService;
@@ -21,5 +23,10 @@ public class AuthController {
     @PostMapping("/register")
     public RegisterResponse register(@Valid @RequestBody RegisterRequest request) {
         return userService.register(request);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+        return userService.login(request);
     }
 }

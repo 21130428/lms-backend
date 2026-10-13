@@ -16,19 +16,16 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<String> emailExceptionHandler(EmailAlreadyExistsException exception) {
-        HttpStatus httpStatus = HttpStatus.CONFLICT;
-        return new ResponseEntity<String>(exception.getMessage(), httpStatus);
+        return new ResponseEntity<String>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UsernameAlreadyExistsException.class)
     public ResponseEntity<String> usernameExceptionHandler(UsernameAlreadyExistsException exception) {
-        HttpStatus httpStatus = HttpStatus.CONFLICT;
-        return new ResponseEntity<String>(exception.getMessage(), httpStatus);
+        return new ResponseEntity<String>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, List<String>>> validException(MethodArgumentNotValidException exception) {
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    public ResponseEntity<Map<String, List<String>>> validExceptionHandler(MethodArgumentNotValidException exception) {
         Map<String, List<String>> errors = new HashMap<>();
         for (FieldError error : exception.getBindingResult().getFieldErrors()) {
             if (errors.containsKey(error.getField())) {
@@ -39,6 +36,21 @@ public class GlobalExceptionHandler {
                 errors.put(error.getField(), messages);
             }
         }
-        return new ResponseEntity<Map<String, List<String>>>(errors, httpStatus);
+        return new ResponseEntity<Map<String, List<String>>>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<String> invalidCredentialsExceptionHandler(InvalidCredentialsException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<String> accountLockedExceptionHandler(AccountLockedException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<String> passwordMismatchExceptionHandler(PasswordMismatchException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

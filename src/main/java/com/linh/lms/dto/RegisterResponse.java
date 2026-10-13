@@ -9,4 +9,9 @@ import lombok.Setter;
 public class RegisterResponse {
     private String username;
     private String email;
+
+    public RegisterResponse(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
 }
