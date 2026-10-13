@@ -12,6 +12,7 @@ A Learning Management System (LMS) backend built with Java and Spring Boot.
 - Maven
 - Lombok
 - Jakarta Validation
+- JUnit 5 and Mockito
 
 ## Current Progress
 
@@ -19,9 +20,11 @@ A Learning Management System (LMS) backend built with Java and Spring Boot.
 - [x] PostgreSQL database configuration
 - [x] User entity and repository
 - [x] User registration API
+- [x] Login API
 - [x] Password hashing with BCrypt
-- [ ] Global exception handling
-- [ ] Authentication with JWT
+- [x] Global exception handling
+- [x] Unit tests for user registration and login service logic
+- [ ] JWT authentication and authorization
 - [ ] Course management
 - [ ] Lesson management
 - [ ] Quiz
@@ -37,10 +40,23 @@ Request body:
 
 ```json
 {
-  "username": "linh",
-  "email": "linh@example.com",
-  "password": "123456",
-  "confirmPassword": "123456"
+  "username": "student01",
+  "email": "student@example.com",
+  "password": "Password123",
+  "confirmPassword": "Password123"
+}
+```
+
+### Login
+
+`POST /api/auth/login`
+
+Request body:
+
+```json
+{
+  "email": "student@example.com",
+  "password": "Password123"
 }
 ```
 
