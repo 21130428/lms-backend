@@ -6,20 +6,25 @@ import com.linh.lms.dto.RegisterRequest;
 import com.linh.lms.dto.RegisterResponse;
 import com.linh.lms.entity.User;
 import com.linh.lms.exception.*;
+import com.linh.lms.repository.RefreshTokenRepository;
 import com.linh.lms.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.security.NoSuchAlgorithmException;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JwtService jwtService, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public RegisterResponse register(RegisterRequest request) {
@@ -44,7 +49,7 @@ public class UserService {
         return new RegisterResponse(request.getUsername(), request.getEmail());
     }
 
-    public LoginResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) throws NoSuchAlgorithmException {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new InvalidCredentialsException("Mật khẩu hoặc email không chính xác"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Mật khẩu hoặc email không chính xác");
@@ -53,7 +58,8 @@ public class UserService {
             throw new AccountLockedException("Tài khoản của bạn đã bị khóa");
         }
         String token = jwtService.generateToken(user.getId());
-        return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), token);
+        String refreshToken = refreshTokenService.getToken(user);
+        return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), token, refreshToken);
     }
 
 }

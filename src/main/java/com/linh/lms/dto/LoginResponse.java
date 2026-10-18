@@ -12,12 +12,14 @@ public class LoginResponse {
     private String email;
     private Role role;
     private String token;
+    private String refreshToken;
 
-    public LoginResponse(Long id, String username, String email, Role role, String token) {
+    public LoginResponse(Long id, String username, String email, Role role, String token, String refreshToken) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.role = role;
         this.token = token;
+        this.refreshToken = refreshToken;
     }
 }
