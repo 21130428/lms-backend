@@ -28,6 +28,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
+    @Mock
+    private JwtService jwtService;
 
     @InjectMocks
     private UserService userService;
@@ -49,6 +51,7 @@ class UserServiceTest {
         User user = createActiveUser();
         when(userRepository.findByEmail("student@gmail.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("Password123", "hashedPassword")).thenReturn(true);
+        when(jwtService.generateToken(user.getId())).thenReturn("token");
 
         // Act: thực hiện đăng nhập
         LoginRequest request = new LoginRequest();
@@ -59,6 +62,7 @@ class UserServiceTest {
 
         // Assert: kiểm tra kết quả
         assertNotNull(response);
+        assertEquals("token", response.getToken());
         assertEquals("student01", response.getUsername());
         assertEquals("student@gmail.com", response.getEmail());
         assertEquals(Role.STUDENT, response.getRole());

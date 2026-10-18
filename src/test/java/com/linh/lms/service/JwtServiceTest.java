@@ -12,8 +12,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class JwtServiceTest {
@@ -29,6 +28,7 @@ public class JwtServiceTest {
         String token = jwtService.generateToken(15L);
         String userId = jwtService.extractUserId(token);
         assertEquals("15", userId);
+        assertFalse(token.isEmpty());
     }
 
     @Test
