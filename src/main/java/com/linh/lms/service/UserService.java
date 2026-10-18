@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public RegisterResponse register(RegisterRequest request) {
@@ -50,7 +52,8 @@ public class UserService {
         if (!user.isStatus()) {
             throw new AccountLockedException("Tài khoản của bạn đã bị khóa");
         }
-        return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole());
+        String token = jwtService.generateToken(user.getId());
+        return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), token);
     }
 
 }
