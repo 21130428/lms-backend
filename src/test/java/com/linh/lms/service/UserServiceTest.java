@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +31,8 @@ class UserServiceTest {
     private BCryptPasswordEncoder passwordEncoder;
     @Mock
     private JwtService jwtService;
+    @Mock
+    private RefreshTokenService refreshTokenService;
 
     @InjectMocks
     private UserService userService;
@@ -46,12 +49,13 @@ class UserServiceTest {
     }
 
     @Test
-    void loginSuccess() {
+    void loginSuccess() throws NoSuchAlgorithmException {
         // Arrange: chuẩn bị dữ liệu
         User user = createActiveUser();
         when(userRepository.findByEmail("student@gmail.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("Password123", "hashedPassword")).thenReturn(true);
         when(jwtService.generateToken(user.getId())).thenReturn("token");
+        when(refreshTokenService.getToken(user)).thenReturn("refreshToken");
 
         // Act: thực hiện đăng nhập
         LoginRequest request = new LoginRequest();
@@ -62,6 +66,7 @@ class UserServiceTest {
 
         // Assert: kiểm tra kết quả
         assertNotNull(response);
+        assertEquals("refreshToken", response.getRefreshToken());
         assertEquals("token", response.getToken());
         assertEquals("student01", response.getUsername());
         assertEquals("student@gmail.com", response.getEmail());
