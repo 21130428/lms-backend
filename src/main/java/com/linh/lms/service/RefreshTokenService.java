@@ -1,7 +1,10 @@
 package com.linh.lms.service;
 
+import com.linh.lms.dto.RefreshRequest;
+import com.linh.lms.dto.RefreshResponse;
 import com.linh.lms.entity.RefreshToken;
 import com.linh.lms.entity.User;
+import com.linh.lms.exception.InvalidRefreshTokenException;
 import com.linh.lms.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +21,11 @@ import java.util.Optional;
 @Service
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtService jwtService;
 
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtService jwtService) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtService = jwtService;
     }
 
     public String generateToken() {
@@ -47,14 +52,14 @@ public class RefreshTokenService {
         return token;
     }
 
-    public boolean verifyToken(String token) throws NoSuchAlgorithmException {
-        Optional<RefreshToken> optional = refreshTokenRepository.findByTokenHash(hashToken(token));
-        if (optional.isEmpty()) {
-            return false;
-        }
-        RefreshToken refreshToken = optional.get();
-        return !refreshToken.isRevoked() && refreshToken.getExpiresAt().isAfter(Instant.now()) && refreshToken.getUser().isStatus();
-    }
+//    public boolean verifyToken(String token) throws NoSuchAlgorithmException {
+//        Optional<RefreshToken> optional = refreshTokenRepository.findByTokenHash(hashToken(token));
+//        if (optional.isEmpty()) {
+//            return false;
+//        }
+//        RefreshToken refreshToken = optional.get();
+//        return !refreshToken.isRevoked() && refreshToken.getExpiresAt().isAfter(Instant.now()) && refreshToken.getUser().isStatus();
+//    }
 
     public Optional<RefreshToken> findValidToken(String token) throws NoSuchAlgorithmException {
         Optional<RefreshToken> optional = refreshTokenRepository.findByTokenHash(hashToken(token));
@@ -66,5 +71,15 @@ public class RefreshTokenService {
             return optional;
         }
         return Optional.empty();
+    }
+
+    public RefreshResponse refreshToken(RefreshRequest request) throws NoSuchAlgorithmException {
+        Optional<RefreshToken> optional = findValidToken(request.getRefreshToken());
+        if (optional.isEmpty()) {
+            throw new InvalidRefreshTokenException("Refresh token không hợp lệ");
+        }
+        Long userId = optional.get().getUser().getId();
+        String token = jwtService.generateToken(userId);
+        return new RefreshResponse(token);
     }
 }

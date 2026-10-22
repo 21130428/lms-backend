@@ -53,4 +53,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> passwordMismatchExceptionHandler(PasswordMismatchException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<String> invalidRefreshTokenExceptionHandler(InvalidRefreshTokenException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
 }

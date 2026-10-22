@@ -1,9 +1,7 @@
 package com.linh.lms.controller;
 
-import com.linh.lms.dto.LoginRequest;
-import com.linh.lms.dto.LoginResponse;
-import com.linh.lms.dto.RegisterRequest;
-import com.linh.lms.dto.RegisterResponse;
+import com.linh.lms.dto.*;
+import com.linh.lms.service.RefreshTokenService;
 import com.linh.lms.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +15,11 @@ import java.security.NoSuchAlgorithmException;
 @RequestMapping("api/auth")
 public class AuthController {
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, RefreshTokenService refreshTokenService) {
         this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @PostMapping("/register")
@@ -30,5 +30,10 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest request) throws NoSuchAlgorithmException {
         return userService.login(request);
+    }
+
+    @PostMapping("/refresh")
+    public RefreshResponse refresh(@Valid @RequestBody RefreshRequest request) throws NoSuchAlgorithmException {
+        return refreshTokenService.refreshToken(request);
     }
 }

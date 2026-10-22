@@ -61,5 +61,5 @@ public class UserService {
         String refreshToken = refreshTokenService.getToken(user);
         return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), token, refreshToken);
     }
-
+    
 }
